@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const debug = require('debug')('sql');
 const chalk = require('chalk');
 const Sequelize = require('sequelize');
@@ -16,4 +16,4 @@ module.exports = new Sequelize(connectionString, {
 });
 
 // run our models file (makes all associations for our Sequelize objects)
-require('./models')
+require('./models');
