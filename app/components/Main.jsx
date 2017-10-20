@@ -18,7 +18,7 @@ class Main extends Component {
 
     render() {
         return (
-            <div>
+            <div id="app">
                 <Navbar />
                 <Switch>
                     <Route exact path="/campuses" component={CampusList} />

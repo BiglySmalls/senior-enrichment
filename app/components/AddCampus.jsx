@@ -42,7 +42,7 @@ class AddCampus extends Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form className="inputs" onSubmit={this.handleSubmit}>
                 <label>Add New Campus</label>
                 
                 <input

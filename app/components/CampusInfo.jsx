@@ -6,11 +6,16 @@ import { putCampus, fetchCampuses, fetchStudents } from '../reducers';
 class CampusInfo extends Component {
     constructor(props) {
         super(props);
+
+        const campusId = +props.match.params.campusId
+        const campuses = props.campuses;
+        const campus = campuses && campuses.find(campus => campus.id === campusId);
+
         this.state = {
             disabled: true,
-            campusName: '',
-            campusImgUrl: '',
-            campus: {}
+            campusName: campus && campus.name,
+            campusImgUrl: campus && campus.image,
+            campus: campus && campus
         }
         this.enableInputs = this.enableInputs.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -63,36 +68,41 @@ class CampusInfo extends Component {
         const campus = this.state.campus
 
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label>Campus Information</label>
-                <div className="input-group">
+            !campus ? <h2>No Campus Found</h2> :
+                <form className="inputs" onSubmit={this.handleSubmit}>
+                    <label>Campus Information</label>
+                    <div className="input-group">
 
-                    {/* INPUT FIELDS TO EDIT CAMPUS INFO; SHOULD BE DISABLED AND HAVE SELECTED CAMPUS INFO IN FIELDS */}
+                        {/* INPUT FIELDS TO EDIT CAMPUS INFO; LOADS DEFAULT INFO AFTER REFRESH */}
 
-                    <input
-                        disabled={this.state.disabled}
-                        value={this.state.campusName || ''}
-                        type="text"
-                        name="campusName"
-                        onChange={this.handleNameChange} />
+                        <input
+                            disabled={this.state.disabled}
+                            value={this.state.campusName}
+                            type="text"
+                            name="campusName"
+                            onChange={this.handleNameChange} />
 
-                    <input
-                        disabled={this.state.disabled}
-                        value={this.state.campusImgUrl || ''}
-                        name="campusImgUrl"
-                        onChange={this.handleUrlChange} />
+                        <input
+                            disabled={this.state.disabled}
+                            value={this.state.campusImgUrl || ''}
+                            name="campusImgUrl"
+                            onChange={this.handleUrlChange} />
 
-                    {/* BUTTONS TO ENABLE INPUT FIELDS AND SUBMIT EDITTED CAMPUS INFO */}
+                        {/* BUTTONS TO ENABLE INPUT FIELDS AND SUBMIT EDITTED CAMPUS INFO */}
 
-                    <button className="btn btn-warning" onClick={this.enableInputs}>Edit</button>
-                    <button className="btn btn-success">Submit</button>
-                </div>
-            </form>
+                        <button className="btn btn-warning" onClick={this.enableInputs}>Edit</button>
+                        <button className="btn btn-success">Submit</button>
+                    </div>
+                </form>
         )
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
+    if (!state.campuses.length) return {
+        campuses: []
+
+    }
 
     const { campusId } = ownProps
     return {

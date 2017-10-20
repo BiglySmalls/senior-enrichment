@@ -1,0 +1,18 @@
+#app > div {
+    display: flex;
+    flex-direction: column;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+.inputs {
+    display: flex;
+    justify-content: space-around;
+}
+
+.inputs > * {
+    margin: 0 20px 0 20px;
+}

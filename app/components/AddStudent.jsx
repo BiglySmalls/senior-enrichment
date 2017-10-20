@@ -47,11 +47,13 @@ class AddStudent extends Component {
                 <input
                     name="newStudentName"
                     placeholder="Student Name"
+                    value={this.state.newStudentName}
                     onChange={this.handleNameChange} />
 
                 <input
                     name="newStudentUrl"
                     placeholder="Student Email"
+                    value={this.state.newStudentEmail}
                     onChange={this.handleEmailChange} />
 
                 <button className="btn btn-success" type="submit">Submit</button>
