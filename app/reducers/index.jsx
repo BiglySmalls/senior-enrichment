@@ -10,9 +10,10 @@ const initialState = {
 
 const GET_CAMPUSES = 'GET_CAMPUSES';
 const ADD_NEW_CAMPUS = 'ADD_NEW_CAMPUS';
+const UPDATE_CAMPUS = 'UPDATE_CAMPUS';
 const DELETE_CAMPUS = 'DELETE_CAMPUS'
 const GET_STUDENTS = 'GET_STUDENTS';
-const ADD_STUDENT = 'ADD_STUDENT';
+const ADD_NEW_STUDENT = 'ADD_NEW_STUDENT';
 const UPDATE_STUDENT = 'UPDATE_STUDENT';
 const DELETE_STUDENT = 'DELETE_STUDENT';
 
@@ -24,14 +25,19 @@ export const getCampuses = (campuses) => ({
     campuses
 })
 
-export const addNewCampus = (campus) => ({
+export const addNewCampus = (newCampus) => ({
     type: ADD_NEW_CAMPUS,
-    campus
+    newCampus
 })
 
-export const deleteCampus = (campus) => ({
+export const updateCampus = (updatedCampus) => ({
+    type: UPDATE_CAMPUS,
+    updatedCampus
+})
+
+export const deleteCampus = (deletedCampus) => ({
     type: DELETE_STUDENT,
-    campus
+    deletedCampus
 })
 
 export const getStudents = (students) => ({
@@ -39,19 +45,19 @@ export const getStudents = (students) => ({
     students
 })
 
-export const addStudent = (student) => ({
-    type: ADD_STUDENT,
-    student
+export const addNewStudent = (newStudent) => ({
+    type: ADD_NEW_STUDENT,
+    newStudent
 })
 
-export const updateStudent = (student) => ({
+export const updateStudent = (updatedStudent) => ({
     type: UPDATE_STUDENT,
-    student
+    updatedStudent
 })
 
-export const deleteStudent = (student) => ({
+export const deleteStudent = (deletedStudent) => ({
     type: DELETE_STUDENT,
-    student
+    deletedStudent
 })
 
 // THUNKS
@@ -60,8 +66,8 @@ export function fetchCampuses() {
     return function thunk(dispatch) {
         return axios.get('/api/campuses')
             .then(res => res.data)
-            .then(campuses => {
-                dispatch(getCampuses(campuses));
+            .then(allCampuses => {
+                dispatch(getCampuses(allCampuses));
             });
     };
 }
@@ -70,18 +76,30 @@ export function postCampus(campus) {
     return function thunk(dispatch) {
         return axios.post('/api/campuses', campus)
             .then(res => res.data)
-            .then(campus => {
-                dispatch(addNewCampus(campus));
+            .then(newCampus => {
+                dispatch(addNewCampus(newCampus));
             });
     };
+}
+
+export function putCampus(campusId, campus) {
+    return function thunk(dispatch) {
+        return axios.put(`/api/campuses/${campusId}`, campus)
+            .then(res => res.data)
+            .then(updatedCampus => {
+                dispatch(updateCampus(updatedCampus));
+                dispatch(fetchCampuses());
+            })
+    }
 }
 
 export function removeCampus(campusId) {
     return function thunk(dispatch) {
         return axios.delete(`/api/campuses/${campusId}`)
             .then(res => res.data)
-            .then(campus => {
-                dispatch(deleteCampus(campus));
+            .then(deletedCampus => {
+                dispatch(deleteCampus(deletedCampus));
+                dispatch(fetchCampuses());
             });
     };
 }
@@ -90,19 +108,30 @@ export function fetchStudents() {
     return function thunk(dispatch) {
         return axios.get('/api/students')
             .then(res => res.data)
-            .then(students => {
-                dispatch(getStudents(students));
+            .then(allStudents => {
+                dispatch(getStudents(allStudents));
             });
     };
 }
 
-export function putStudent(student) {
+export function postStudent(student) {
     return function thunk(dispatch) {
-        return axios.put(`/api/students/${student.id}`, student)
-        .then(res => res.data)
-        .then(student => {
-            dispatch(updateStudent(student));
-        })
+        return axios.post('/api/students', student)
+            .then(res => res.data)
+            .then(newStudent => {
+                dispatch(addNewStudent(newStudent));
+            });
+    };
+}
+
+export function putStudent(studentId, student) {
+    return function thunk(dispatch) {
+        return axios.put(`/api/students/${studentId}`, student)
+            .then(res => res.data)
+            .then(updatedStudent => {
+                dispatch(updateStudent(updatedStudent));
+                dispatch(fetchStudents());
+            })
     }
 }
 
@@ -115,6 +144,7 @@ export function removeStudent(studentId) {
             })
             .then(student => {
                 dispatch(deleteStudent(student));
+                dispatch(fetchStudents());
             });
     };
 }
@@ -122,8 +152,8 @@ export function removeStudent(studentId) {
 // REDUCER
 
 const rootReducer = function (state = initialState, action) {
-    const newState = Object.assign({}, state)
-    const index;
+    const newState = Object.assign({}, state);
+    let index;
 
     switch (action.type) {
         case GET_CAMPUSES:
@@ -131,31 +161,41 @@ const rootReducer = function (state = initialState, action) {
             return newState;
 
         case ADD_NEW_CAMPUS:
-            newState.campuses = [...newState.campuses, action.campus];
+            newState.campuses = [...newState.campuses, action.newCampus];
+            return newState;
+
+        case UPDATE_CAMPUS:
+            index = newState.campuses.findIndex(campus => campus.id === action.updatedCampus.id);
+            newState.campuses[index] = action.campus;
             return newState;
 
         case DELETE_CAMPUS:
-            index = newState.campuses.indexOf(action.campus);
+            index = newState.campuses.indexOf(action.deletedCampus);
             if (index > -1) newState.campuses.splice(index, 1);
+            newState.students = newState.students.filter(student => student.campusId !== campus.id);
             return newState;
 
         case GET_STUDENTS:
             newState.students = action.students;
             return newState;
 
+        case ADD_NEW_STUDENT:
+            newState.students = [...newState.students, action.newStudent];
+            return newState;
+
         case UPDATE_STUDENT:
-            index = newState.students.findIndex(student => student.id === action.student.id);
-            newState.students[index] = action.student;
+            index = newState.students.findIndex(student => student.id === action.updatedStudent.id);
+            newState.students[index] = action.updatedStudent;
             return newState;
 
         case DELETE_STUDENT:
-            index = newState.students.indexOf(action.student);
+            index = newState.students.indexOf(action.deletedStudent);
             if (index > -1) newState.students.splice(index, 1);
             return newState;
 
         default:
-            return state
+            return state;
     }
 };
 
-export default rootReducer
+export default rootReducer;

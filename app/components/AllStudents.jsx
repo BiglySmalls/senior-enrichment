@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { removeStudent } from '../reducers';
-import CampusInfo from './CampusInfo';
-import AddStudent from './AddStudent'; 
+import { fetchStudents, removeStudent } from '../reducers';
 
-
-class StudentList extends Component {
+class AllStudents extends Component {
 
     render() {
-        const { campusId, campusName, students } = this.props;
+        const { students } = this.props;
 
         return (
             <div>
-                <CampusInfo campusId={campusId} />
-
-                <h3>{campusName}</h3>
-                <div className="">
+                <div className="row">
                     {
                         students.map(student => (
                             <div className="col-xs-4 thumbnail" key={student.id}>
@@ -35,21 +29,14 @@ class StudentList extends Component {
                         ))
                     }
                 </div>
-
-                <AddStudent campusId={campusId}/>
             </div>
         )
     }
 }
 
-const mapStateToProps = function (state, ownProps) {
-    const campusId = Number(ownProps.match.params.campusId);
-    const filteredStudents = campusId ? state.students.filter(student => student.campusId === campusId) : state.students;
-    const campusName = ownProps.campusName ? `${ownProps.campusName} Campus` : 'All Students';
-
+const mapStateToProps = function (state) {
     return {
-        students: filteredStudents,
-        campusId,
+        students: state.students
     };
 };
 
@@ -59,4 +46,4 @@ const mapDispatchToProps = function (dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudentList);
+export default connect(mapStateToProps, mapDispatchToProps)(AllStudents);

@@ -7,7 +7,7 @@ export default class Home extends Component {
         return (
             <div className="col-xs-12">
                 <div className="col-xs-4">
-                    <Link className="thumbnail" to={"/campuses"}>
+                    <Link className="thumbnail" to="/campuses">
                         <img src="https://www.organicfacts.net/wp-content/uploads/2013/05/watermelon2.jpg" />
                         <div className="caption">
                             <h5>

@@ -11,17 +11,26 @@ campusRouter.get('/:campusId/students');
 
 campusRouter.post('/', (req, res, next) => {
     db.Campus.create(req.body)
-        .then(campus => res.json(campus))
+        .then(newCampus => res.json(newCampus))
         .catch(next);
 });
 
-campusRouter.put('/:campusId');
-
-campusRouter.delete('/:campusId', (req, res, next) => {
-    db.Campus.destroy({
+campusRouter.put('/:campusId', (req, res, next) => {
+    db.Campus.update(req.body, {
         where: { id: req.params.campusId }
     })
-        .then(deletedRow => res.json(deletedRow))
+        .then(newCampus => res.json(newCampus))
+        .catch(next);
+});
+
+campusRouter.delete('/:campusId', (req, res, next) => {
+    db.Student.destroy({
+        where: { campusId: req.params.campusId }
+    })
+        .then(() => db.Campus.destroy({
+            where: { id: req.params.campusId }
+        }))
+        .then(deletedCampus => res.json(deletedCampus))
         .catch(next);
 });
 

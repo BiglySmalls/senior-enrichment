@@ -13,6 +13,7 @@ class AddCampus extends Component {
 
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleImgChange = this.handleImgChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleNameChange(evt) {
@@ -27,35 +28,43 @@ class AddCampus extends Component {
         })
     }
 
+    handleSubmit(evt) {
+        const campus = { name: this.state.newCampusName, image: this.state.newImgChange };
+
+        evt.preventDefault();
+        console.log(this.props)
+        this.props.dispatchNewCampus(campus);
+        this.setState({
+            newCampusName: '',
+            newImageUrl: ''
+        });
+    }
 
     render() {
         return (
-            <form onSubmit={(e) => {
-                const campus = { name: this.state.newCampusName, image: this.state.newImgChange };
-
-                e.preventDefault();
-                this.props.dispatch(postCampus(campus));
-                this.setState({
-                    newCampusName: '',
-                    newImageUrl: ''
-                })
-
-
-            }}>
+            <form onSubmit={this.handleSubmit}>
+                <label>Add New Campus</label>
+                
                 <input
                     name="newCampusName"
                     placeholder="Campus Name"
-                    onChange={this.handleNameChange} />
+                    onChange={this.handleNameChange}
+                    value={this.state.newCampusName} />
 
                 <input
                     name="newImageUrl"
                     placeholder="Campus Image"
-                    onChange={this.handleImgChange} />
+                    onChange={this.handleImgChange}
+                    value={this.state.newImageUrl} />
 
-                <button className="btn btn-submit" type="submit">Submit</button>
+                <button className="btn btn-success" type="submit">Submit</button>
             </form>
         )
     }
 }
 
-export default connect()(AddCampus);
+const mapDispatchToProps = (dispatch) => ({
+    dispatchNewCampus: (campus) => dispatch(postCampus(campus))
+})
+
+export default connect(null, mapDispatchToProps)(AddCampus);

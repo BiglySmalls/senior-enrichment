@@ -13,7 +13,7 @@ const db = require('../index');
 
 Student.belongsTo(Campus, {
     foreignKey: { allowNull: false },
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
 });
 
 Campus.hasMany(Student, {

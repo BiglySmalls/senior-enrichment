@@ -6,10 +6,6 @@ import AddCampus from './AddCampus';
 
 class CampusList extends Component {
 
-    componentDidMount() {
-        this.props.OnMount()
-    }
-
     render() {
         const { campuses } = this.props;
 
@@ -49,8 +45,9 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        OnMount: () => { dispatch(fetchCampuses()) },
-        OnDelete: id => { dispatch(removeCampus(id)) }
+        OnDelete: id => {
+            dispatch(removeCampus(id));
+        }
     }
 }
 

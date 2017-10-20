@@ -22,7 +22,9 @@ studentRouter.post('/', (req, res, next) => {
 });
 
 studentRouter.put('/:studentId', (req, res, next) => {
-    db.Student.update(req.body)
+    db.Student.update(req.body, {
+        where: { id: req.params.studentId }
+    })
         .then(student => res.json(student))
         .catch(next);
 });
@@ -32,7 +34,8 @@ studentRouter.delete('/:studentId', (req, res, next) => {
     db.Student.destroy({
         where: { id: req.params.studentId }
     })
-        .then(deletedRow => res.json(deletedRow));
+        .then(deletedRow => res.json(deletedRow))
+        .catch(next);
 });
 
 module.exports = studentRouter;
